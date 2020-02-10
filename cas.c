@@ -14,11 +14,6 @@ void print_input(AMORT_CALC_INPUT input) {
 }
 
 AMORT_CALC_OUTPUT create_payment_table(AMORT_CALC_INPUT input) {
-    FILE *f = fopen(input.csv_file, "w");
-    if(f == NULL) {
-        fprintf(stderr, "Can't open input file in.list!\n");
-        exit(1);
-    }
     double principal_payments = input.notional / input.period;
     double exp = 1.0 / 12.0;
     double base = 1.0 + input.rate;
@@ -29,15 +24,14 @@ AMORT_CALC_OUTPUT create_payment_table(AMORT_CALC_INPUT input) {
     calc_ouput.n_lines = input.period;
     for(int i = 0; i < input.period; i++) {
         double interest = rate_per_month * remaning_debth;
-        remaning_debth -= principal_payments;
+        remaning_debt -= principal_payments;
         AMORT_TABLE_OUTPUT table_output;
         table_output.month = i;
         table_output.principal_amort = principal_payments;
         table_output.interest = interest;
         table_output.month_payment = interest + principal_payments;
-        table_output.principal_left = remaning_debth;
+        table_output.principal_left = remaning_debt;
         calc_ouput.table[i] = table_output;
-        // fprintf(f, "%d,%f,%f,%f,%f\n", i+1, principal_payments, interest, interest + principal_payments, remaning_debth);
     }
     return calc_ouput;
 }
@@ -54,6 +48,7 @@ void export_to_csv(AMORT_CALC_INPUT input, AMORT_CALC_OUTPUT output) {
         AMORT_TABLE_OUTPUT table_output = output.table[i];
         fprintf(f, "%d,%f,%f,%f,%f\n", i+1, table_output.principal_amort, table_output.interest, table_output.interest + table_output.principal_amort, table_output.principal_left);
     }
+    fclose(f);
 }
 
 AMORT_CALC_INPUT process_inputs(int argc, char** argv) {
