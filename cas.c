@@ -18,12 +18,11 @@ AMORT_CALC_OUTPUT create_payment_table(AMORT_CALC_INPUT input) {
     double exp = 1.0 / 12.0;
     double base = 1.0 + input.rate;
     double rate_per_month = pow(base, exp) - 1.0;
-    double remaning_debth = input.notional;
-    fprintf(f, "month,payment,interest,total_payment,remaning_debth\n");
+    double remaning_debt = input.notional;
     AMORT_CALC_OUTPUT calc_ouput;
     calc_ouput.n_lines = input.period;
     for(int i = 0; i < input.period; i++) {
-        double interest = rate_per_month * remaning_debth;
+        double interest = rate_per_month * remaning_debt;
         remaning_debt -= principal_payments;
         AMORT_TABLE_OUTPUT table_output;
         table_output.month = i;
